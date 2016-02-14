@@ -19,6 +19,8 @@ public class GamePanel extends JPanel implements Runnable {
     private int FPS = 30;
     private double averageFPS;
 
+    private Player player;
+
     public GamePanel() {
         super();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -57,6 +59,8 @@ public class GamePanel extends JPanel implements Runnable {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D) image.getGraphics();
 
+        player = new Player();
+
         // Used to maintain FPS
         long startTimeNanoseconds; // Start time of each loop
         long URDTimeMilliseconds; // Time it takes to update, render, and draw the game
@@ -73,14 +77,12 @@ public class GamePanel extends JPanel implements Runnable {
             // Get current start time of a loop in nanoseconds
             startTimeNanoseconds = System.nanoTime();
 
-            // Update, render, and draw
+            // Update, Render, and Draw game
             gameUpdate();
             gameRender();
             gameDraw();
 
-            /**
-             * Control speed of the game loop
-             */
+            // Control speed of the game loop
             URDTimeMilliseconds = (System.nanoTime() - startTimeNanoseconds) / 1000000;
             waitTimeMilliseconds = targetTimeMilliseconds - URDTimeMilliseconds;
 
@@ -90,9 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
             catch(Exception e) {
             }
 
-            /**
-             * Calculating the average FPS
-             */
+            // Calculate the average FPS
             totalTime += System.nanoTime() - startTimeNanoseconds;
             frameCount++;
 
@@ -108,7 +108,7 @@ public class GamePanel extends JPanel implements Runnable {
      * Update game logic (player, enemy, and projectile position, and collision detection).
      */
     private void gameUpdate() {
-
+        player.update();
     }
 
     /**
@@ -118,10 +118,15 @@ public class GamePanel extends JPanel implements Runnable {
      * Items rendered includes player, enemies, background, and projectiles.
      */
     private void gameRender() {
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        // Set background color
         g.setColor(Color.BLACK);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+
+        // Display average FPS
+        g.setColor(Color.WHITE);
         g.drawString("FPS: " + averageFPS, 10, 10);
+
+        player.draw(g);
     }
 
     /**
