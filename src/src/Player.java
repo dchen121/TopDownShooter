@@ -19,21 +19,21 @@ public class Player {
     private boolean down;
 
     private int lives;
-    private Color color1;
-    private Color color2;
+    private Color normalColor;
+    private Color hitColor;
 
     public Player() {
         x = GamePanel.WIDTH / 2;
         y = GamePanel.HEIGHT / 2;
-        r = 5;
+        r = 7;
 
         dx = 0;
         dy = 0;
-        speed = 5;
+        speed = 7;
 
         lives = 3;
-        color1 = Color.WHITE;
-        color2 = Color.RED;
+        normalColor = Color.WHITE;
+        hitColor = Color.RED;
     }
 
     public void update() {
@@ -58,15 +58,30 @@ public class Player {
     }
 
     public void draw(Graphics2D g) {
-        g.setColor(color1);
+        g.setColor(normalColor);
         g.fillOval(x - r, y - r, 2 * r, 2 * r);
 
         g.setStroke(new BasicStroke(3));
-        g.setColor(color1.darker());
+        g.setColor(normalColor.darker());
         g.drawOval(x - r, y - r, 2 * r, 2 * r);
         g.setStroke(new BasicStroke(1));
     }
 
 
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+
+    public void setDown(boolean down) {
+        this.down = down;
+    }
 
 }

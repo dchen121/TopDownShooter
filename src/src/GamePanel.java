@@ -1,14 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 /**
  * @author Daniel Chen
  */
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends JPanel implements Runnable, KeyListener {
 
-    public static int WIDTH = 400;
-    public static int HEIGHT = 400;
+    public static int WIDTH = 500;
+    public static int HEIGHT = 600;
 
     private Thread thread;
     private boolean running;
@@ -39,6 +41,8 @@ public class GamePanel extends JPanel implements Runnable {
             thread = new Thread(this);
             thread.start();
         }
+
+        addKeyListener(this);
     }
 
     /**
@@ -124,7 +128,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Display average FPS
         g.setColor(Color.WHITE);
-        g.drawString("FPS: " + averageFPS, 10, 10);
+        g.drawString("FPS: " + (int) averageFPS, 10, 10);
 
         player.draw(g);
     }
@@ -136,5 +140,51 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics g2 = this.getGraphics();
         g2.drawImage(image, 0, 0, null);
         g2.dispose();
+    }
+
+    /**
+     * Invoked when a key has been typed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key typed event.
+     *
+     * @param e
+     */
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    /**
+     * Invoked when a key has been pressed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key pressed event.
+     *
+     * @param e
+     */
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+
+        if (keyCode == KeyEvent.VK_LEFT) player.setLeft(true);
+        if (keyCode == KeyEvent.VK_RIGHT) player.setRight(true);
+        if (keyCode == KeyEvent.VK_UP) player.setUp(true);
+        if (keyCode == KeyEvent.VK_DOWN) player.setDown(true);
+    }
+
+    /**
+     * Invoked when a key has been released.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key released event.
+     *
+     * @param e
+     */
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+
+        if (keyCode == KeyEvent.VK_LEFT) player.setLeft(false);
+        if (keyCode == KeyEvent.VK_RIGHT) player.setRight(false);
+        if (keyCode == KeyEvent.VK_UP) player.setUp(false);
+        if (keyCode == KeyEvent.VK_DOWN) player.setDown(false);
     }
 }
