@@ -43,7 +43,7 @@ public class Player {
         recoveryTimerNanoseconds = 0;
 
         normalColor = Color.BLUE;
-        recoveringColor = Color.RED;
+        recoveringColor = Color.YELLOW;
 
         firing = false;
         firingTimerNanoseconds = System.nanoTime();
@@ -51,25 +51,41 @@ public class Player {
     }
 
     public void update() {
-        // Check movement and update direction of movement of player
+        movePlayer();
+        playerBoundaryCollision();
+        fire();
+    }
+
+    /**
+     * Update direction and move player.
+     */
+    private void movePlayer() {
         if (left)   dx = -speed;
         if (right)  dx = speed;
         if (up)     dy = -speed;
         if (down)   dy = speed;
 
-        // Move player according to direction
         x += dx;
         y += dy;
 
-        // Check player collision with the boundaries of the game
+        dx = 0;
+        dy = 0;
+    }
+
+    /**
+     * Check player-boundary collision. Prevent player from going beyond game boundary.
+     */
+    private void playerBoundaryCollision() {
         if (x < r) x = r;
         if (y < r) y = r;
         if (x > GamePanel.WIDTH - r) x = GamePanel.WIDTH - r;
         if (y > GamePanel.HEIGHT - r) y = GamePanel.HEIGHT - r;
+    }
 
-        dx = 0;
-        dy = 0;
-
+    /**
+     * Fire bullet. Player can only fire once per firing delay time.
+     */
+    private void fire() {
         // Player can only fire once per firing delay time
         if (firing) {
             long elapsedMilliseconds = (System.nanoTime() - firingTimerNanoseconds) / 1000000;

@@ -56,8 +56,7 @@ public class Enemy {
     }
 
     public void update() {
-        x += dx;
-        y += dy;
+        moveEnemy();
 
         if (!ready) {
             if (x > r && x < GamePanel.WIDTH - r && y > r && y < GamePanel.HEIGHT - r) {
@@ -65,7 +64,18 @@ public class Enemy {
             }
         }
 
-        // Change direction of enemy if it hits game boundary
+        enemyBoundaryCollision();
+    }
+
+    private void moveEnemy() {
+        x += dx;
+        y += dy;
+    }
+
+    /**
+     * If enemy collides with boundary, enemy bounces off wall.
+     */
+    private void enemyBoundaryCollision() {
         if (x < r && dx < 0) dx = -dx;
         if (y < r && dy < 0) dy = -dy;
         if (x > GamePanel.WIDTH - r && dx > 0) dx = -dx;

@@ -128,28 +128,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         updateEnemies();
         bulletEnemyCollision();
         removeDeadEnemies();
-
-        // Check player-enemy collision
-        if (!player.isRecovering()) {
-            int playerX = player.getX();
-            int playerY = player.getY();
-            int playerR = player.getR();
-
-            for (int i = 0; i < enemies.size(); i++) {
-                Enemy e = enemies.get(i);
-                double enemyX = e.getX();
-                double enemyY = e.getY();
-                double enemyR = e.getR();
-
-                double dx = playerX - enemyX;
-                double dy = playerY - enemyY;
-                double distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < playerR + enemyR) {
-                    player.hit();
-                }
-            }
-        }
+        playerEnemyCollision();
     }
 
     /**
@@ -191,6 +170,32 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             if (e.isDead()) {
                 enemies.remove(i);
                 i--;
+            }
+        }
+    }
+
+    /**
+     * Check player-enemy collision. If collision, mark player as hit and recovering. Player is invincible while recovering.
+     */
+    private void playerEnemyCollision() {
+        if (!player.isRecovering()) {
+            int playerX = player.getX();
+            int playerY = player.getY();
+            int playerR = player.getR();
+
+            for (int i = 0; i < enemies.size(); i++) {
+                Enemy e = enemies.get(i);
+                double enemyX = e.getX();
+                double enemyY = e.getY();
+                double enemyR = e.getR();
+
+                double dx = playerX - enemyX;
+                double dy = playerY - enemyY;
+                double distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < playerR + enemyR) {
+                    player.hit();
+                }
             }
         }
     }
