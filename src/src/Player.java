@@ -127,6 +127,10 @@ public class Player {
         score += i;
     }
 
+    public boolean isDead() {
+        return lives <= 0;
+    }
+
     public int getX() { return x; }
     public int getY() { return y; }
     public int getR() { return r; }
@@ -143,10 +147,7 @@ public class Player {
         this.up = b;
     }
     public void setDown(boolean b) { this.down = b; }
+
+
     public void setFiring(boolean b) { this.firing = b; }
-
-
-    public boolean isDead() {
-        return lives <= 0;
-    }
 }

@@ -106,13 +106,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
         }
 
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-        String s = "G A M E   O V E R";
-        g.drawString(s, WIDTH / 4, HEIGHT / 2);
-        gameDraw();
+        gameOver();
     }
 
     private void init() {
@@ -138,6 +132,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     /**
+     * Draw game over screen.
+     */
+    private void gameOver() {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+        String s = "G A M E   O V E R";
+        g.drawString(s, WIDTH / 4, HEIGHT / 2);
+        gameDraw();
+    }
+
+    /**
      * Update game logic (player, enemy, and projectile position, and collision detection).
      */
     private void gameUpdate() {
@@ -149,10 +156,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         removeDeadEnemies();
 
         playerEnemyCollision();
-
-        if (player.isDead()) {
-            running = false;
-        }
     }
 
     /**
@@ -220,6 +223,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
                 if (!player.isRecovering() && distance < playerR + enemyR) {
                     player.hit();
+
+                    if (player.isDead()) {
+                        running = false;
+                    }
                 }
             }
         }
