@@ -23,8 +23,11 @@ public class Player {
     private long firingDelayMilliseconds;
 
     private int lives;
+    private boolean recovering;
+    private long recoveryTimerNanoseconds;
+
     private Color normalColor;
-    private Color hitColor;
+    private Color recoveringColor;
 
     public Player() {
         x = GamePanel.WIDTH / 2;
@@ -36,8 +39,11 @@ public class Player {
         speed = 7;
 
         lives = 3;
+        recovering = false;
+        recoveryTimerNanoseconds = 0;
+
         normalColor = Color.BLUE;
-        hitColor = Color.RED;
+        recoveringColor = Color.RED;
 
         firing = false;
         firingTimerNanoseconds = System.nanoTime();
@@ -73,13 +79,33 @@ public class Player {
                 firingTimerNanoseconds = System.nanoTime();
             }
         }
+
+        long elapsed = (System.nanoTime() - recoveryTimerNanoseconds) / 1000000;
+        if (elapsed > 2000) {
+            recovering = false;
+            recoveryTimerNanoseconds = 0;
+        }
     }
 
     public void draw(Graphics2D g) {
-        g.setColor(normalColor);
-        g.fillOval(x - r, y - r, 2 * r, 2 * r);
+        if (recovering) {
+            g.setColor(recoveringColor);
+            g.fillOval(x - r, y - r, 2 * r, 2 * r);
+        } else {
+            g.setColor(normalColor);
+            g.fillOval(x - r, y - r, 2 * r, 2 * r);
+        }
     }
 
+    public void hit() {
+        lives--;
+        recovering = true;
+        recoveryTimerNanoseconds = System.nanoTime();
+    }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getR() { return r; }
     public void setLeft(boolean b) {
         this.left = b;
     }
@@ -93,4 +119,5 @@ public class Player {
         this.down = b;
     }
     public void setFiring(boolean b) { this.firing = b; }
+    public boolean isRecovering() { return recovering; }
 }
