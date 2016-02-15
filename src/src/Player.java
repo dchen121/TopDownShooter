@@ -132,6 +132,7 @@ public class Player {
     public int getR() { return r; }
     public boolean isRecovering() { return recovering; }
     public int getScore() { return score; }
+    public int getLives() { return lives; }
     public void setLeft(boolean b) {
         this.left = b;
     }

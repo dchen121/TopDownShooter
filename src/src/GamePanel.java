@@ -230,6 +230,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         renderBullets();
         renderEnemies();
 
+        // draw player lives
+        for (int i = 0; i < player.getLives(); i++) {
+            g.setColor(Color.WHITE);
+            g.fillOval(20 + (20 * i), 20, player.getR() * 2, player.getR() * 2);
+        }
+
         // draw player score
         g.setColor(Color.WHITE);
         g.setFont(new Font("Century Gothic", Font.PLAIN, 14));
