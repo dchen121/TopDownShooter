@@ -132,15 +132,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     /**
-     * Draw game over screen.
+     * Draw game over screen with final score.
      */
     private void gameOver() {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, WIDTH, HEIGHT);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+
         String s = "G A M E   O V E R";
-        g.drawString(s, WIDTH / 4, HEIGHT / 2);
+        int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
+        g.drawString(s, (WIDTH - length) / 2, HEIGHT / 2);
+
+        s = "Final Score: " + player.getScore();
+        length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
+        int height = (int) g.getFontMetrics().getStringBounds(s, g).getHeight();
+        g.drawString(s, (WIDTH - length) / 2, (HEIGHT / 2) + height + 10);
+
         gameDraw();
     }
 
