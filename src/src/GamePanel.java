@@ -122,20 +122,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
      * Update game logic (player, enemy, and projectile position, and collision detection).
      */
     private void gameUpdate() {
-        player.update();
-
-        // If bullets collide with boundary of game, remove them from the list of bullets
-        for (int i = 0; i < bullets.size(); i++) {
-            boolean collisionWithBoundary = bullets.get(i).update();
-            if (collisionWithBoundary) {
-                bullets.remove(i);
-                i--;
-            }
-        }
-
-        for (int i = 0; i < enemies.size(); i++) {
-            enemies.get(i).update();
-        }
+        updatePlayer();
+        updateBullets();
+        updateEnemies();
     }
 
     /**
@@ -153,15 +142,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g.setColor(Color.BLACK);
         g.drawString("FPS: " + (int) averageFPS, 10, 10);
 
-        player.draw(g);
-
-        for (int i = 0; i < bullets.size(); i++) {
-            bullets.get(i).draw(g);
-        }
-
-        for (int i = 0; i < enemies.size(); i++) {
-            enemies.get(i).draw(g);
-        }
+        renderPlayer();
+        renderBullets();
+        renderEnemies();
     }
 
     /**
@@ -219,5 +202,43 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         if (keyCode == KeyEvent.VK_UP) player.setUp(false);
         if (keyCode == KeyEvent.VK_DOWN) player.setDown(false);
         if (keyCode == KeyEvent.VK_SPACE) player.setFiring(false);
+    }
+
+
+    private void updatePlayer() {
+        player.update();
+    }
+
+    private void updateEnemies() {
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update();
+        }
+    }
+
+    private void updateBullets() {
+        // If bullets collide with boundary of game, remove them from the list of bullets
+        for (int i = 0; i < bullets.size(); i++) {
+            boolean collisionWithBoundary = bullets.get(i).update();
+            if (collisionWithBoundary) {
+                bullets.remove(i);
+                i--;
+            }
+        }
+    }
+
+    private void renderPlayer() {
+        player.draw(g);
+    }
+
+    private void renderBullets() {
+        for (int i = 0; i < bullets.size(); i++) {
+            bullets.get(i).draw(g);
+        }
+    }
+
+    private void renderEnemies() {
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
+        }
     }
 }
