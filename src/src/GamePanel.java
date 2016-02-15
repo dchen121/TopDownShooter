@@ -24,6 +24,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     public static Player player;
     public static ArrayList<Bullet> bullets;
+    public static ArrayList<Enemy> enemies;
 
     public GamePanel() {
         super();
@@ -67,6 +68,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         player = new Player();
         bullets = new ArrayList<Bullet>();
+        enemies = new ArrayList<Enemy>();
+
+        for (int i = 0; i < 5; i++) {
+            Enemy e = new Enemy(1, 1);
+            enemies.add(e);
+        }
 
         // Used to maintain FPS
         long startTimeNanoseconds; // Start time of each loop
@@ -125,6 +132,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 i--;
             }
         }
+
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update();
+        }
     }
 
     /**
@@ -146,6 +157,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).draw(g);
+        }
+
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
         }
     }
 
@@ -181,11 +196,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_LEFT) player.setIsLeft(true);
-        if (keyCode == KeyEvent.VK_RIGHT) player.setIsRight(true);
-        if (keyCode == KeyEvent.VK_UP) player.setIsUp(true);
-        if (keyCode == KeyEvent.VK_DOWN) player.setIsDown(true);
-        if (keyCode == KeyEvent.VK_SPACE) player.setIsFiring(true);
+        if (keyCode == KeyEvent.VK_LEFT) player.setLeft(true);
+        if (keyCode == KeyEvent.VK_RIGHT) player.setRight(true);
+        if (keyCode == KeyEvent.VK_UP) player.setUp(true);
+        if (keyCode == KeyEvent.VK_DOWN) player.setDown(true);
+        if (keyCode == KeyEvent.VK_SPACE) player.setFiring(true);
     }
 
     /**
@@ -199,10 +214,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void keyReleased(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_LEFT) player.setIsLeft(false);
-        if (keyCode == KeyEvent.VK_RIGHT) player.setIsRight(false);
-        if (keyCode == KeyEvent.VK_UP) player.setIsUp(false);
-        if (keyCode == KeyEvent.VK_DOWN) player.setIsDown(false);
-        if (keyCode == KeyEvent.VK_SPACE) player.setIsFiring(false);
+        if (keyCode == KeyEvent.VK_LEFT) player.setLeft(false);
+        if (keyCode == KeyEvent.VK_RIGHT) player.setRight(false);
+        if (keyCode == KeyEvent.VK_UP) player.setUp(false);
+        if (keyCode == KeyEvent.VK_DOWN) player.setDown(false);
+        if (keyCode == KeyEvent.VK_SPACE) player.setFiring(false);
     }
 }

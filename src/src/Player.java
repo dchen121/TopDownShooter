@@ -13,12 +13,12 @@ public class Player {
     private int dy;
     private int speed;
 
-    private boolean isLeft;
-    private boolean isRight;
-    private boolean isUp;
-    private boolean isDown;
+    private boolean left;
+    private boolean right;
+    private boolean up;
+    private boolean down;
 
-    private boolean isFiring;
+    private boolean firing;
     private long firingTimerNanoseconds;
     private long firingDelayMilliseconds;
 
@@ -39,17 +39,17 @@ public class Player {
         normalColor = Color.BLUE;
         hitColor = Color.RED;
 
-        isFiring = false;
+        firing = false;
         firingTimerNanoseconds = System.nanoTime();
         firingDelayMilliseconds = 200;
     }
 
     public void update() {
         // Check movement and update direction of movement of player
-        if (isLeft)   dx = -speed;
-        if (isRight)  dx = speed;
-        if (isUp)     dy = -speed;
-        if (isDown)   dy = speed;
+        if (left)   dx = -speed;
+        if (right)  dx = speed;
+        if (up)     dy = -speed;
+        if (down)   dy = speed;
 
         // Move player according to direction
         x += dx;
@@ -65,7 +65,7 @@ public class Player {
         dy = 0;
 
         // Player can only fire once per firing delay time
-        if (isFiring) {
+        if (firing) {
             long elapsedMilliseconds = (System.nanoTime() - firingTimerNanoseconds) / 1000000;
             if (elapsedMilliseconds >= firingDelayMilliseconds) {
                 Bullet b = new Bullet(270, x, y); // Fire a bullet facing upwards
@@ -80,17 +80,17 @@ public class Player {
         g.fillOval(x - r, y - r, 2 * r, 2 * r);
     }
 
-    public void setIsLeft(boolean isLeft) {
-        this.isLeft = isLeft;
+    public void setLeft(boolean b) {
+        this.left = b;
     }
-    public void setIsRight(boolean isRight) {
-        this.isRight = isRight;
+    public void setRight(boolean b) {
+        this.right = b;
     }
-    public void setIsUp(boolean isUp) {
-        this.isUp = isUp;
+    public void setUp(boolean b) {
+        this.up = b;
     }
-    public void setIsDown(boolean isDown) {
-        this.isDown = isDown;
+    public void setDown(boolean b) {
+        this.down = b;
     }
-    public void setIsFiring(boolean isFiring) { this.isFiring = isFiring; }
+    public void setFiring(boolean b) { this.firing = b; }
 }
