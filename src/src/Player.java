@@ -146,4 +146,7 @@ public class Player {
     public void setFiring(boolean b) { this.firing = b; }
 
 
+    public boolean isDead() {
+        return lives <= 0;
+    }
 }

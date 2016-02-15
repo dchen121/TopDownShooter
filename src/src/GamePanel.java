@@ -105,6 +105,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 totalTime = 0;
             }
         }
+
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+        String s = "G A M E   O V E R";
+        g.drawString(s, WIDTH / 4, HEIGHT / 2);
+        gameDraw();
     }
 
     private void init() {
@@ -136,9 +144,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         updatePlayer();
         updateBullets();
         updateEnemies();
+
         bulletEnemyCollision();
         removeDeadEnemies();
+
         playerEnemyCollision();
+
+        if (player.isDead()) {
+            running = false;
+        }
     }
 
     /**
