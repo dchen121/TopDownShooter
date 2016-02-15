@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * @author Daniel Chen
@@ -21,7 +22,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private int FPS = 30;
     private double averageFPS;
 
-    private Player player;
+    public static Player player;
+    public static ArrayList<Bullet> bullets;
 
     public GamePanel() {
         super();
@@ -64,6 +66,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g = (Graphics2D) image.getGraphics();
 
         player = new Player();
+        bullets = new ArrayList<Bullet>();
 
         // Used to maintain FPS
         long startTimeNanoseconds; // Start time of each loop
@@ -113,6 +116,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
      */
     private void gameUpdate() {
         player.update();
+
+        // If bullets collide with boundary of game, remove them from the list of bullets
+        for (int i = 0; i < bullets.size(); i++) {
+            boolean collisionWithBoundary = bullets.get(i).update();
+            if (collisionWithBoundary) {
+                bullets.remove(i);
+                i--;
+            }
+        }
     }
 
     /**
@@ -123,14 +135,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
      */
     private void gameRender() {
         // Set background color
-        g.setColor(Color.BLACK);
+        g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
         // Display average FPS
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.drawString("FPS: " + (int) averageFPS, 10, 10);
 
         player.draw(g);
+
+        for (int i = 0; i < bullets.size(); i++) {
+            bullets.get(i).draw(g);
+        }
     }
 
     /**
@@ -165,10 +181,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_LEFT) player.setLeft(true);
-        if (keyCode == KeyEvent.VK_RIGHT) player.setRight(true);
-        if (keyCode == KeyEvent.VK_UP) player.setUp(true);
-        if (keyCode == KeyEvent.VK_DOWN) player.setDown(true);
+        if (keyCode == KeyEvent.VK_LEFT) player.setIsLeft(true);
+        if (keyCode == KeyEvent.VK_RIGHT) player.setIsRight(true);
+        if (keyCode == KeyEvent.VK_UP) player.setIsUp(true);
+        if (keyCode == KeyEvent.VK_DOWN) player.setIsDown(true);
+        if (keyCode == KeyEvent.VK_SPACE) player.setIsFiring(true);
     }
 
     /**
@@ -182,9 +199,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void keyReleased(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_LEFT) player.setLeft(false);
-        if (keyCode == KeyEvent.VK_RIGHT) player.setRight(false);
-        if (keyCode == KeyEvent.VK_UP) player.setUp(false);
-        if (keyCode == KeyEvent.VK_DOWN) player.setDown(false);
+        if (keyCode == KeyEvent.VK_LEFT) player.setIsLeft(false);
+        if (keyCode == KeyEvent.VK_RIGHT) player.setIsRight(false);
+        if (keyCode == KeyEvent.VK_UP) player.setIsUp(false);
+        if (keyCode == KeyEvent.VK_DOWN) player.setIsDown(false);
+        if (keyCode == KeyEvent.VK_SPACE) player.setIsFiring(false);
     }
 }

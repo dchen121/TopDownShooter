@@ -13,10 +13,14 @@ public class Player {
     private int dy;
     private int speed;
 
-    private boolean left;
-    private boolean right;
-    private boolean up;
-    private boolean down;
+    private boolean isLeft;
+    private boolean isRight;
+    private boolean isUp;
+    private boolean isDown;
+
+    private boolean isFiring;
+    private long firingTimerNanoseconds;
+    private long firingDelayMilliseconds;
 
     private int lives;
     private Color normalColor;
@@ -32,16 +36,20 @@ public class Player {
         speed = 7;
 
         lives = 3;
-        normalColor = Color.WHITE;
+        normalColor = Color.BLUE;
         hitColor = Color.RED;
+
+        isFiring = false;
+        firingTimerNanoseconds = System.nanoTime();
+        firingDelayMilliseconds = 200;
     }
 
     public void update() {
         // Check movement and update direction of movement of player
-        if (left)   dx = -speed;
-        if (right)  dx = speed;
-        if (up)     dy = -speed;
-        if (down)   dy = speed;
+        if (isLeft)   dx = -speed;
+        if (isRight)  dx = speed;
+        if (isUp)     dy = -speed;
+        if (isDown)   dy = speed;
 
         // Move player according to direction
         x += dx;
@@ -55,33 +63,34 @@ public class Player {
 
         dx = 0;
         dy = 0;
+
+        // Player can only fire once per firing delay time
+        if (isFiring) {
+            long elapsedMilliseconds = (System.nanoTime() - firingTimerNanoseconds) / 1000000;
+            if (elapsedMilliseconds >= firingDelayMilliseconds) {
+                Bullet b = new Bullet(270, x, y); // Fire a bullet facing upwards
+                GamePanel.bullets.add(b);
+                firingTimerNanoseconds = System.nanoTime();
+            }
+        }
     }
 
     public void draw(Graphics2D g) {
         g.setColor(normalColor);
         g.fillOval(x - r, y - r, 2 * r, 2 * r);
-
-        g.setStroke(new BasicStroke(3));
-        g.setColor(normalColor.darker());
-        g.drawOval(x - r, y - r, 2 * r, 2 * r);
-        g.setStroke(new BasicStroke(1));
     }
 
-
-    public void setLeft(boolean left) {
-        this.left = left;
+    public void setIsLeft(boolean isLeft) {
+        this.isLeft = isLeft;
     }
-
-    public void setRight(boolean right) {
-        this.right = right;
+    public void setIsRight(boolean isRight) {
+        this.isRight = isRight;
     }
-
-    public void setUp(boolean up) {
-        this.up = up;
+    public void setIsUp(boolean isUp) {
+        this.isUp = isUp;
     }
-
-    public void setDown(boolean down) {
-        this.down = down;
+    public void setIsDown(boolean isDown) {
+        this.isDown = isDown;
     }
-
+    public void setIsFiring(boolean isFiring) { this.isFiring = isFiring; }
 }
