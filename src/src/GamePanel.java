@@ -62,19 +62,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void run() {
         running = true;
-
-        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        g = (Graphics2D) image.getGraphics();
-
-        player = new Player();
-        bullets = new ArrayList<Bullet>();
-        enemies = new ArrayList<Enemy>();
-
-        // Spawn one round of enemies
-        for (int i = 0; i < 5; i++) {
-            Enemy e = new Enemy(1, 1);
-            enemies.add(e);
-        }
+        init();
 
         // Used to maintain FPS
         long startTimeNanoseconds; // Start time of each loop
@@ -116,6 +104,28 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 frameCount = 0;
                 totalTime = 0;
             }
+        }
+    }
+
+    private void init() {
+        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        g = (Graphics2D) image.getGraphics();
+        g.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+
+        player = new Player();
+        bullets = new ArrayList<Bullet>();
+        enemies = new ArrayList<Enemy>();
+
+        // Spawn one round of enemies
+        for (int i = 0; i < 5; i++) {
+            Enemy e = new Enemy(1, 1);
+            enemies.add(e);
         }
     }
 
@@ -168,6 +178,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         for (int i = 0; i < enemies.size(); i++) {
             Enemy e = enemies.get(i);
             if (e.isDead()) {
+                player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
                 i--;
             }
@@ -218,6 +229,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         renderPlayer();
         renderBullets();
         renderEnemies();
+
+        // draw player score
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 14));
+        g.drawString("Score: " + player.getScore(), WIDTH - 100, 30);
     }
 
     /**

@@ -91,4 +91,6 @@ public class Enemy {
     public double getX() { return x; }
     public double getY() { return y; }
     public int getR() { return r; }
+    public int getType() { return type; }
+    public int getRank() { return rank; }
 }

@@ -26,6 +26,8 @@ public class Player {
     private boolean recovering;
     private long recoveryTimerNanoseconds;
 
+    private int score;
+
     private Color normalColor;
     private Color recoveringColor;
 
@@ -48,6 +50,8 @@ public class Player {
         firing = false;
         firingTimerNanoseconds = System.nanoTime();
         firingDelayMilliseconds = 200;
+
+        score = 0;
     }
 
     public void update() {
@@ -119,9 +123,15 @@ public class Player {
         recoveryTimerNanoseconds = System.nanoTime();
     }
 
+    public void addScore(int i) {
+        score += i;
+    }
+
     public int getX() { return x; }
     public int getY() { return y; }
     public int getR() { return r; }
+    public boolean isRecovering() { return recovering; }
+    public int getScore() { return score; }
     public void setLeft(boolean b) {
         this.left = b;
     }
@@ -131,9 +141,8 @@ public class Player {
     public void setUp(boolean b) {
         this.up = b;
     }
-    public void setDown(boolean b) {
-        this.down = b;
-    }
+    public void setDown(boolean b) { this.down = b; }
     public void setFiring(boolean b) { this.firing = b; }
-    public boolean isRecovering() { return recovering; }
+
+
 }
