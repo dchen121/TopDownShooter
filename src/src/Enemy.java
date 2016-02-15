@@ -65,7 +65,7 @@ public class Enemy {
             }
         }
 
-        // Change direction of enemy if it hits the game boundary
+        // Change direction of enemy if it hits game boundary
         if (x < r && dx < 0) dx = -dx;
         if (y < r && dy < 0) dy = -dy;
         if (x > GamePanel.WIDTH - r && dx > 0) dx = -dx;

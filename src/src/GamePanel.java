@@ -70,6 +70,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         bullets = new ArrayList<Bullet>();
         enemies = new ArrayList<Enemy>();
 
+        // Spawn one round of enemies
         for (int i = 0; i < 5; i++) {
             Enemy e = new Enemy(1, 1);
             enemies.add(e);
@@ -125,6 +126,51 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         updatePlayer();
         updateBullets();
         updateEnemies();
+        bulletEnemyCollision();
+        removeDeadEnemies();
+    }
+
+    /**
+     * Check bullet-enemy collision. If collision, mark enemy as hit and remove bullet.
+     */
+    private void bulletEnemyCollision() {
+        for (int i = 0; i < bullets.size(); i++) {
+            Bullet b = bullets.get(i);
+            double bulletX = b.getX();
+            double bulletY = b.getY();
+            double bulletR = b.getR();
+
+            for (int j = 0; j < enemies.size(); j++) {
+                Enemy e = enemies.get(j);
+                double enemyX = e.getX();
+                double enemyY = e.getY();
+                double enemyR = e.getR();
+
+                double dx = bulletX - enemyX;
+                double dy = bulletY - enemyY;
+                double distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < bulletR + enemyR) {
+                    e.hit();
+                    bullets.remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove all dead enemies
+     */
+    private void removeDeadEnemies() {
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy e = enemies.get(i);
+            if (e.isDead()) {
+                enemies.remove(i);
+                i--;
+            }
+        }
     }
 
     /**
@@ -215,6 +261,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    /**
+     * Update bullets and remove those that exceed game boundary
+     */
     private void updateBullets() {
         // If bullets collide with boundary of game, remove them from the list of bullets
         for (int i = 0; i < bullets.size(); i++) {
