@@ -25,6 +25,7 @@ public class Player {
     private int lives;
     private boolean recovering;
     private long recoveryTimerNanoseconds;
+    private final long recoveryTimeMilliseconds = 2000;
 
     private int score;
 
@@ -100,7 +101,7 @@ public class Player {
         }
 
         long elapsed = (System.nanoTime() - recoveryTimerNanoseconds) / 1000000;
-        if (elapsed > 2000) {
+        if (elapsed > recoveryTimeMilliseconds) {
             recovering = false;
             recoveryTimerNanoseconds = 0;
         }

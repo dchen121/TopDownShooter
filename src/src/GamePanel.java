@@ -10,9 +10,9 @@ import java.util.ArrayList;
  */
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
-    public static int WIDTH = 500;
-    public static int HEIGHT = 600;
-    public static String FONT = "Tahoma";
+    public static final int WIDTH = 500;
+    public static final int HEIGHT = 600;
+    public static final String FONT = "Tahoma";
 
     private Thread thread;
     private boolean running;
@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage image;
     private Graphics2D g;
 
-    private int FPS = 30;
+    private final int FPS = 30;
     private double averageFPS;
 
     public static Player player;
@@ -31,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private long waveStartTimerElapsedMilliseconds;
     private int waveNumber;
     private boolean waveStart;
-    private int waveDelayMilliseconds = 3000;
+    private final int waveDelayMilliseconds = 3000;
     private boolean noMoreWaves;
 
 
@@ -216,8 +216,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             g.setFont(new Font(FONT, Font.PLAIN, 18));
             String s = "-   W A V E   " + waveNumber + "   -";
             int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
+
             int alpha = (int) (255 * Math.sin(3.14 * waveStartTimerElapsedMilliseconds / waveDelayMilliseconds));
-            if (alpha > 255) alpha = 255;
+            if (alpha > 255) {
+                alpha = 255;
+            }
+
             g.setColor(new Color(255, 255, 255, alpha));
             g.drawString(s, WIDTH / 2 - length / 2, HEIGHT / 2);
         }
@@ -267,16 +271,25 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         enemies.clear();
 
         if (waveNumber == 1) {
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 4; i++) {
                 enemies.add(new Enemy(1, 1));
             }
         }
         else if (waveNumber == 2) {
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 4; i++) {
                 enemies.add(new Enemy(1, 1));
             }
+            enemies.add(new Enemy(1, 2));
+            enemies.add(new Enemy(1, 2));
+        }
+        else if (waveNumber == 3) {
+            enemies.add(new Enemy(1, 4));
+            enemies.add(new Enemy(2, 4));
+            enemies.add(new Enemy(3, 4));
+
             noMoreWaves = true;
         }
+
     }
 
     /**
@@ -319,6 +332,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
                 i--;
+
+                e.explode();
             }
         }
     }
