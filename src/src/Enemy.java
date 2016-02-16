@@ -23,6 +23,10 @@ public class Enemy {
     private boolean ready;
     private boolean dead;
 
+    private boolean hit;
+    private long hitTimerNanoseconds;
+    private final long hitTimerDelayMilliseconds = 50;
+
     public Enemy (int type, int rank) {
         this.type = type;
         this.rank = rank;
@@ -30,7 +34,7 @@ public class Enemy {
         switch(type) {
             // Default enemy type
             case 1:
-                enemyColor = Color.RED;
+                enemyColor = Color.BLUE;
 
                 switch(rank) {
                     case 1:
@@ -58,7 +62,7 @@ public class Enemy {
 
             // Fast, weak
             case 2:
-                enemyColor = Color.RED;
+                enemyColor = Color.GREEN;
 
                 switch(rank) {
                     case 1:
@@ -86,7 +90,7 @@ public class Enemy {
 
             // Slow, strong
             case 3:
-                enemyColor = Color.GREEN;
+                enemyColor = Color.BLACK;
 
                 switch(rank) {
                     case 1:
@@ -124,6 +128,9 @@ public class Enemy {
 
         ready = false;
         dead = false;
+
+        hit = false;
+        hitTimerNanoseconds = 0;
     }
 
     public void hit() {
@@ -131,6 +138,9 @@ public class Enemy {
         if (health <= 0) {
             dead = true;
         }
+
+        hit = true;
+        hitTimerNanoseconds = System.nanoTime();
     }
 
     /**
@@ -157,14 +167,27 @@ public class Enemy {
 
     public void update() {
         moveEnemy();
+        checkReady();
+        enemyBoundaryCollision();
+        checkHit();
+    }
 
+    private void checkHit() {
+        if (hit) {
+            long elapsedMilliseconds = (System.nanoTime() - hitTimerNanoseconds) / 1000000;
+            if (elapsedMilliseconds > hitTimerDelayMilliseconds) {
+                hit = false;
+                hitTimerNanoseconds = 0;
+            }
+        }
+    }
+
+    private void checkReady() {
         if (!ready) {
             if (x > r && x < GamePanel.WIDTH - r && y > r && y < GamePanel.HEIGHT - r) {
                 ready = true;
             }
         }
-
-        enemyBoundaryCollision();
     }
 
     private void moveEnemy() {
@@ -183,7 +206,13 @@ public class Enemy {
     }
 
     public void draw(Graphics2D g) {
-        g.setColor(enemyColor);
+        if (hit) {
+            g.setColor(Color.RED);
+        } else {
+            g.setColor(enemyColor);
+
+        }
+
         g.fillOval((int) (x - r), (int) (y - r), 2 * r, 2 * r);
     }
 

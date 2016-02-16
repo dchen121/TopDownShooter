@@ -5,32 +5,33 @@ import java.awt.*;
  */
 public class Player {
 
+    private final Color normalColor = Color.BLACK;
+    private final Color recoveringColor = Color.YELLOW;
+
     private int x;
     private int y;
-    private int r;
 
+    private int r;
     private int dx;
     private int dy;
-    private int speed;
 
+    private int speed;
     private boolean left;
     private boolean right;
     private boolean up;
-    private boolean down;
 
+    private boolean down;
     private boolean firing;
     private long firingTimerNanoseconds;
-    private long firingDelayMilliseconds;
 
+    private long firingDelayMilliseconds;
     private int lives;
     private boolean recovering;
     private long recoveryTimerNanoseconds;
+
     private final long recoveryTimeMilliseconds = 2000;
 
     private int score;
-
-    private Color normalColor;
-    private Color recoveringColor;
 
     public Player() {
         x = GamePanel.WIDTH / 2;
@@ -45,9 +46,6 @@ public class Player {
         recovering = false;
         recoveryTimerNanoseconds = 0;
 
-        normalColor = Color.BLUE;
-        recoveringColor = Color.YELLOW;
-
         firing = false;
         firingTimerNanoseconds = System.nanoTime();
         firingDelayMilliseconds = 200;
@@ -57,6 +55,7 @@ public class Player {
 
     public void update() {
         movePlayer();
+        checkRecovering();
         playerBoundaryCollision();
         fire();
     }
@@ -75,6 +74,16 @@ public class Player {
 
         dx = 0;
         dy = 0;
+    }
+
+    private void checkRecovering() {
+        if (recovering) {
+            long elapsed = (System.nanoTime() - recoveryTimerNanoseconds) / 1000000;
+            if (elapsed > recoveryTimeMilliseconds) {
+                recovering = false;
+                recoveryTimerNanoseconds = 0;
+            }
+        }
     }
 
     /**
@@ -99,22 +108,16 @@ public class Player {
                 firingTimerNanoseconds = System.nanoTime();
             }
         }
-
-        long elapsed = (System.nanoTime() - recoveryTimerNanoseconds) / 1000000;
-        if (elapsed > recoveryTimeMilliseconds) {
-            recovering = false;
-            recoveryTimerNanoseconds = 0;
-        }
     }
 
     public void draw(Graphics2D g) {
         if (recovering) {
             g.setColor(recoveringColor);
-            g.fillOval(x - r, y - r, 2 * r, 2 * r);
         } else {
             g.setColor(normalColor);
-            g.fillOval(x - r, y - r, 2 * r, 2 * r);
         }
+
+        g.fillOval(x - r, y - r, 2 * r, 2 * r);
     }
 
     public void hit() {
