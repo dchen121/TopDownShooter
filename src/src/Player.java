@@ -137,6 +137,7 @@ public class Player {
     public int getX() { return x; }
     public int getY() { return y; }
     public int getR() { return r; }
+    public Color getNormalColor() { return normalColor; }
     public boolean isRecovering() { return recovering; }
     public int getScore() { return score; }
     public int getLives() { return lives; }

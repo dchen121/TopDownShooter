@@ -12,7 +12,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     public static final int WIDTH = 500;
     public static final int HEIGHT = 600;
-    public static final String FONT = "Tahoma";
+    public static final String FONT_STYLE = "Tahoma";
 
     private Thread thread;
     private boolean running;
@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage image;
     private Graphics2D g;
 
-    private final int FPS = 30;
+    private final int FPS = 110;
     private double averageFPS;
 
     public static Player player;
@@ -150,7 +150,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, WIDTH, HEIGHT);
         g.setColor(Color.WHITE);
-        g.setFont(new Font(FONT, Font.PLAIN, 16));
+        g.setFont(new Font(FONT_STYLE, Font.PLAIN, 16));
 
         String s = "G A M E   O V E R";
         int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
@@ -193,7 +193,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         // Display average FPS
         g.setColor(Color.BLACK);
-        g.setFont(new Font(FONT, Font.PLAIN, 11));
+        g.setFont(new Font(FONT_STYLE, Font.PLAIN, 11));
         g.drawString("FPS: " + (int) averageFPS, 5, 10);
 
         renderPlayer();
@@ -202,18 +202,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         // Draw player lives
         for (int i = 0; i < player.getLives(); i++) {
-            g.setColor(Color.WHITE);
+            g.setColor(player.getNormalColor());
             g.fillOval(20 + (20 * i), 20, player.getR() * 2, player.getR() * 2);
         }
 
         // Display player score
         g.setColor(Color.WHITE);
-        g.setFont(new Font(FONT, Font.PLAIN, 14));
+        g.setFont(new Font(FONT_STYLE, Font.PLAIN, 14));
         g.drawString("Score: " + player.getScore(), WIDTH - 100, 30);
 
         // Draw wave number
         if (waveStartTimerNanoseconds != 0) {
-            g.setFont(new Font(FONT, Font.PLAIN, 18));
+            g.setFont(new Font(FONT_STYLE, Font.PLAIN, 18));
             String s = "-   W A V E   " + waveNumber + "   -";
             int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
 
