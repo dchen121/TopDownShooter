@@ -12,6 +12,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     public static int WIDTH = 500;
     public static int HEIGHT = 600;
+    public static String FONT = "Tahoma";
 
     private Thread thread;
     private boolean running;
@@ -26,6 +27,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static ArrayList<Bullet> bullets;
     public static ArrayList<Enemy> enemies;
 
+    private long waveStartTimerNanoseconds;
+    private long waveStartTimerElapsedMilliseconds;
+    private int waveNumber;
+    private boolean waveStart;
+    private int waveDelayMilliseconds = 3000;
+    private boolean noMoreWaves;
+
+
+    /**
+     * Constructor
+     */
     public GamePanel() {
         super();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -124,11 +136,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         bullets = new ArrayList<Bullet>();
         enemies = new ArrayList<Enemy>();
 
-        // Spawn one round of enemies
-        for (int i = 0; i < 5; i++) {
-            Enemy e = new Enemy(1, 1);
-            enemies.add(e);
-        }
+        waveStartTimerNanoseconds = 0;
+        waveStartTimerElapsedMilliseconds = 0;
+        waveStart = true;
+        waveNumber = 0;
+        noMoreWaves = false;
     }
 
     /**
@@ -138,7 +150,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, WIDTH, HEIGHT);
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+        g.setFont(new Font(FONT, Font.PLAIN, 16));
 
         String s = "G A M E   O V E R";
         int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
@@ -156,20 +168,121 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
      * Update game logic (player, enemy, and projectile position, and collision detection).
      */
     private void gameUpdate() {
+        spawnWave();
+
         updatePlayer();
         updateBullets();
         updateEnemies();
 
-        bulletEnemyCollision();
+        checkBulletEnemyCollision();
         removeDeadEnemies();
 
-        playerEnemyCollision();
+        checkPlayerEnemyCollision();
+    }
+
+    /**
+     * Render items that are currently active to an off-screen image before it
+     * gets displayed to the actual screen (double buffering).
+     *
+     * Items rendered includes player, enemies, background, and projectiles.
+     */
+    private void gameRender() {
+        // Draw background
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+
+        // Display average FPS
+        g.setColor(Color.BLACK);
+        g.setFont(new Font(FONT, Font.PLAIN, 11));
+        g.drawString("FPS: " + (int) averageFPS, 5, 10);
+
+        renderPlayer();
+        renderBullets();
+        renderEnemies();
+
+        // Draw player lives
+        for (int i = 0; i < player.getLives(); i++) {
+            g.setColor(Color.WHITE);
+            g.fillOval(20 + (20 * i), 20, player.getR() * 2, player.getR() * 2);
+        }
+
+        // Display player score
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(FONT, Font.PLAIN, 14));
+        g.drawString("Score: " + player.getScore(), WIDTH - 100, 30);
+
+        // Draw wave number
+        if (waveStartTimerNanoseconds != 0) {
+            g.setFont(new Font(FONT, Font.PLAIN, 18));
+            String s = "-   W A V E   " + waveNumber + "   -";
+            int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
+            int alpha = (int) (255 * Math.sin(3.14 * waveStartTimerElapsedMilliseconds / waveDelayMilliseconds));
+            if (alpha > 255) alpha = 255;
+            g.setColor(new Color(255, 255, 255, alpha));
+            g.drawString(s, WIDTH / 2 - length / 2, HEIGHT / 2);
+        }
+    }
+
+    /**
+     * Draw rendered items to the game panel.
+     */
+    private void gameDraw() {
+        Graphics g2 = this.getGraphics();
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+    }
+
+    /**
+     * Spawn next wave.
+     */
+    private void spawnWave() {
+        if (waveStartTimerNanoseconds == 0 && enemies.size() == 0) {
+            // Game over if no more waves left
+            if (noMoreWaves) {
+                running = false;
+            }
+
+            waveNumber++;
+            waveStart = false;
+            waveStartTimerNanoseconds = System.nanoTime();
+        } else {
+            waveStartTimerElapsedMilliseconds = (System.nanoTime() - waveStartTimerNanoseconds) / 1000000;
+
+            if (waveStartTimerElapsedMilliseconds > waveDelayMilliseconds) {
+                waveStart = true;
+                waveStartTimerNanoseconds = 0;
+                waveStartTimerElapsedMilliseconds = 0;
+            }
+        }
+
+        if (waveStart && enemies.size() == 0) {
+            createNewEnemies();
+        }
+    }
+
+    /**
+     * Create enemies for current wave. Must manually add new waves.
+     */
+    private void createNewEnemies() {
+        enemies.clear();
+
+        if (waveNumber == 1) {
+            for (int i = 0; i < 1; i++) {
+                enemies.add(new Enemy(1, 1));
+            }
+        }
+        else if (waveNumber == 2) {
+            for (int i = 0; i < 1; i++) {
+                enemies.add(new Enemy(1, 1));
+            }
+            noMoreWaves = true;
+        }
     }
 
     /**
      * Check bullet-enemy collision. If collision, mark enemy as hit and remove bullet.
      */
-    private void bulletEnemyCollision() {
+    private void checkBulletEnemyCollision() {
         for (int i = 0; i < bullets.size(); i++) {
             Bullet b = bullets.get(i);
             double bulletX = b.getX();
@@ -213,7 +326,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     /**
      * Check player-enemy collision. If collision, mark player as hit and recovering. Player is invincible while recovering.
      */
-    private void playerEnemyCollision() {
+    private void checkPlayerEnemyCollision() {
         if (!player.isRecovering()) {
             int playerX = player.getX();
             int playerY = player.getY();
@@ -238,46 +351,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 }
             }
         }
-    }
-
-    /**
-     * Render items that are currently active to an off-screen image before it
-     * gets displayed to the actual screen (double buffering).
-     *
-     * Items rendered includes player, enemies, background, and projectiles.
-     */
-    private void gameRender() {
-        // Set background color
-        g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
-
-        // Display average FPS
-        g.setColor(Color.BLACK);
-        g.drawString("FPS: " + (int) averageFPS, 10, 10);
-
-        renderPlayer();
-        renderBullets();
-        renderEnemies();
-
-        // draw player lives
-        for (int i = 0; i < player.getLives(); i++) {
-            g.setColor(Color.WHITE);
-            g.fillOval(20 + (20 * i), 20, player.getR() * 2, player.getR() * 2);
-        }
-
-        // draw player score
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Century Gothic", Font.PLAIN, 14));
-        g.drawString("Score: " + player.getScore(), WIDTH - 100, 30);
-    }
-
-    /**
-     * Draw rendered items to the game panel.
-     */
-    private void gameDraw() {
-        Graphics g2 = this.getGraphics();
-        g2.drawImage(image, 0, 0, null);
-        g2.dispose();
     }
 
     /**
@@ -343,7 +416,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
      * Update bullets and remove those that exceed game boundary
      */
     private void updateBullets() {
-        // If bullets collide with boundary of game, remove them from the list of bullets
         for (int i = 0; i < bullets.size(); i++) {
             boolean collisionWithBoundary = bullets.get(i).update();
             if (collisionWithBoundary) {

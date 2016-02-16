@@ -90,7 +90,6 @@ public class Player {
      * Fire bullet. Player can only fire once per firing delay time.
      */
     private void fire() {
-        // Player can only fire once per firing delay time
         if (firing) {
             long elapsedMilliseconds = (System.nanoTime() - firingTimerNanoseconds) / 1000000;
             if (elapsedMilliseconds >= firingDelayMilliseconds) {
@@ -147,7 +146,5 @@ public class Player {
         this.up = b;
     }
     public void setDown(boolean b) { this.down = b; }
-
-
     public void setFiring(boolean b) { this.firing = b; }
 }
