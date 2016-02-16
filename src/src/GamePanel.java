@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage image;
     private Graphics2D g;
 
-    private final int FPS = 110;
+    private final int FPS = 30;
     private double averageFPS;
 
     public static Player player;
@@ -272,7 +272,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         if (waveNumber == 1) {
             for (int i = 0; i < 4; i++) {
-                enemies.add(new Enemy(1, 1));
+                enemies.add(new Enemy(1, 4));
+
+
+                enemies.add(new Enemy(1, 4));
+                enemies.add(new Enemy(2, 4));
+                enemies.add(new Enemy(3, 4));
+
+
             }
         }
         else if (waveNumber == 2) {

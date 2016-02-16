@@ -38,22 +38,22 @@ public class Enemy {
 
                 switch(rank) {
                     case 1:
-                        speed = 2;
+                        speed = 3;
                         r = 5;
                         health = 1;
                         break;
                     case 2:
-                        speed = 2;
+                        speed = 3;
                         r = 10;
                         health = 2;
                         break;
                     case 3:
-                        speed = 1.5;
+                        speed = 3;
                         r = 20;
                         health = 3;
                         break;
                     case 4:
-                        speed = 1.5;
+                        speed = 3;
                         r = 30;
                         health = 4;
                 }
@@ -66,22 +66,22 @@ public class Enemy {
 
                 switch(rank) {
                     case 1:
-                        speed = 3;
+                        speed = 6;
                         r = 5;
                         health = 2;
                         break;
                     case 2:
-                        speed = 3;
+                        speed = 6;
                         r = 10;
                         health = 3;
                         break;
                     case 3:
-                        speed = 4;
+                        speed = 6;
                         r = 15;
                         health = 4;
                         break;
                     case 4:
-                        speed = 5;
+                        speed = 6;
                         r = 20;
                         health = 5;
                 }
@@ -90,28 +90,28 @@ public class Enemy {
 
             // Slow, strong
             case 3:
-                enemyColor = Color.BLACK;
+                enemyColor = Color.ORANGE;
 
                 switch(rank) {
                     case 1:
-                        speed = 1.5;
+                        speed = 2;
                         r = 5;
-                        health = 5;
+                        health = 4;
                         break;
                     case 2:
-                        speed = 1.5;
+                        speed = 2;
                         r = 10;
-                        health = 6;
+                        health = 5;
                         break;
                     case 3:
-                        speed = 1.25;
+                        speed = 2;
                         r = 15;
-                        health = 7;
+                        health = 6;
                         break;
                     case 4:
-                        speed = 1;
+                        speed = 2;
                         r = 20;
-                        health = 8;
+                        health = 7;
                 }
 
                 break;
