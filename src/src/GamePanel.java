@@ -122,6 +122,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         gameOver();
     }
 
+    /**
+     * Initialize fields.
+     */
     private void init() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D) image.getGraphics();
@@ -182,7 +185,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         checkPlayerEnemyCollision();
         checkPlayerPowerUpCollision();
-
     }
 
     /**
@@ -192,32 +194,43 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
      * Items rendered includes player, enemies, background, and projectiles.
      */
     private void gameRender() {
-        // Draw background
-        g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        drawBackground();
+        displayAverageFPS();
+        displayPlayerLives();
+        displayPlayerScore();
+        displayWaveNumber();
 
-        // Display average FPS
-        g.setColor(Color.BLACK);
-        g.setFont(new Font(FONT_STYLE, Font.PLAIN, 11));
-        g.drawString("FPS: " + (int) averageFPS, 5, 10);
-
-        renderPlayer();
+        player.draw(g);
         renderBullets();
         renderEnemies();
         renderPowerUps();
+    }
 
-        // Draw player lives
+    private void drawBackground() {
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    private void displayAverageFPS() {
+        g.setColor(Color.BLACK);
+        g.setFont(new Font(FONT_STYLE, Font.PLAIN, 11));
+        g.drawString("FPS: " + (int) averageFPS, 5, 10);
+    }
+
+    private void displayPlayerLives() {
         for (int i = 0; i < player.getLives(); i++) {
             g.setColor(player.getNormalColor());
             g.fillOval(20 + (20 * i), 20, 15, 15);
         }
+    }
 
-        // Display player score
-        g.setColor(Color.WHITE);
+    private void displayPlayerScore() {
+        g.setColor(Color.BLACK);
         g.setFont(new Font(FONT_STYLE, Font.PLAIN, 14));
         g.drawString("Score: " + player.getScore(), WIDTH - 100, 30);
+    }
 
-        // Draw wave number
+    private void displayWaveNumber() {
         if (waveStartTimerNanoseconds != 0) {
             g.setFont(new Font(FONT_STYLE, Font.PLAIN, 18));
             String s = "-   W A V E   " + waveNumber + "   -";
@@ -338,7 +351,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             if (e.isDead()) {
                 double random = Math.random();
                 if (random < 0.001) powerUps.add(new PowerUp(1, e.getX(), e.getY()));
-                else if (random < 0.005) powerUps.add(new PowerUp(2, e.getX(), e.getY()));
+                else if (random < 0.02) powerUps.add(new PowerUp(2, e.getX(), e.getY()));
 
                 player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
@@ -492,10 +505,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 i--;
             }
         }
-    }
-
-    private void renderPlayer() {
-        player.draw(g);
     }
 
     private void renderBullets() {
