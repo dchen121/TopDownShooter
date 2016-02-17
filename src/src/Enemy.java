@@ -20,6 +20,7 @@ public class Enemy {
 
     private Color enemyColor;
 
+    private boolean slow;
     private boolean ready;
     private boolean dead;
 
@@ -30,6 +31,7 @@ public class Enemy {
     public Enemy (int type, int rank) {
         this.type = type;
         this.rank = rank;
+        slow = false;
 
         switch(type) {
             // Default enemy type
@@ -171,13 +173,13 @@ public class Enemy {
         checkHit();
     }
 
-    private void checkHit() {
-        if (hit) {
-            long elapsedMilliseconds = (System.nanoTime() - hitTimerNanoseconds) / 1000000;
-            if (elapsedMilliseconds > hitTimerDelayMilliseconds) {
-                hit = false;
-                hitTimerNanoseconds = 0;
-            }
+    private void moveEnemy() {
+        if (slow) {
+            x += dx * 0.3;
+            y += dx * 0.3;
+        } else {
+            x += dx;
+            y += dy;
         }
     }
 
@@ -189,11 +191,6 @@ public class Enemy {
         }
     }
 
-    private void moveEnemy() {
-        x += dx;
-        y += dy;
-    }
-
     /**
      * If enemy collides with boundary, enemy bounces off wall.
      */
@@ -202,6 +199,16 @@ public class Enemy {
         if (y < r && dy < 0) dy = -dy;
         if (x > GamePanel.WIDTH - r && dx > 0) dx = -dx;
         if (y > GamePanel.HEIGHT - r && dy > 0) dy = -dy;
+    }
+
+    private void checkHit() {
+        if (hit) {
+            long elapsedMilliseconds = (System.nanoTime() - hitTimerNanoseconds) / 1000000;
+            if (elapsedMilliseconds > hitTimerDelayMilliseconds) {
+                hit = false;
+                hitTimerNanoseconds = 0;
+            }
+        }
     }
 
     public void draw(Graphics2D g) {
@@ -220,4 +227,5 @@ public class Enemy {
     public int getR() { return r; }
     public int getType() { return type; }
     public int getRank() { return rank; }
+    public void setSlow(boolean slow) { this.slow = slow; }
 }

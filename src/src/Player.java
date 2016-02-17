@@ -7,7 +7,7 @@ public class Player {
 
     private final Color normalColor = Color.BLACK;
     private final Color recoveringColor = Color.YELLOW;
-    private final int MAX_DAMAGE = 5;
+    private final int MAX_DAMAGE = 3;
 
     private int x;
     private int y;
@@ -27,12 +27,11 @@ public class Player {
 
     private boolean firing;
     private long firingTimerNanoseconds;
-
     private long firingDelayMilliseconds;
+
     private int lives;
     private boolean recovering;
     private long recoveryTimerNanoseconds;
-
     private final long recoveryTimeMilliseconds = 2000;
 
     private int score;

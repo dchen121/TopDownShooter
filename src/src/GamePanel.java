@@ -35,6 +35,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private final int waveDelayMilliseconds = 3000;
     private boolean noMoreWaves;
 
+    private long slowMoTimerNanoseconds;
+    private long slowMoTimerElapsedMilliseconds;
+    private long slowMoDurationMilliseconds = 5000;
+
 
     /**
      * Constructor
@@ -198,12 +202,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         displayAverageFPS();
         displayPlayerLives();
         displayPlayerScore();
-        displayWaveNumber();
+
+        if (waveStartTimerNanoseconds != 0) {
+            displayWaveNumber();
+        }
 
         player.draw(g);
         renderBullets();
         renderEnemies();
         renderPowerUps();
+
+        if (slowMoTimerNanoseconds != 0) {
+            g.setColor(Color.WHITE);
+            g.drawRect(20, 60, 100, 8);
+            g.fillRect(20, 60, (int) (100 - (100 * slowMoTimerElapsedMilliseconds / slowMoDurationMilliseconds)), 8);
+        }
     }
 
     private void drawBackground() {
@@ -231,7 +244,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     private void displayWaveNumber() {
-        if (waveStartTimerNanoseconds != 0) {
             g.setFont(new Font(FONT_STYLE, Font.PLAIN, 18));
             String s = "-   W A V E   " + waveNumber + "   -";
             int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
@@ -243,7 +255,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
             g.setColor(new Color(255, 255, 255, alpha));
             g.drawString(s, WIDTH / 2 - length / 2, HEIGHT / 2);
-        }
     }
 
     /**
@@ -353,6 +364,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 if (random < 0.001) powerUps.add(new PowerUp(1, e.getX(), e.getY()));
                 else if (random < 0.05) powerUps.add(new PowerUp(2, e.getX(), e.getY()));
                 else if (random < 0.1) powerUps.add(new PowerUp(3, e.getX(), e.getY()));
+                else if (random < 0.15) powerUps.add(new PowerUp(4, e.getX(), e.getY()));
+                else powerUps.add(new PowerUp(4, e.getX(), e.getY()));
 
                 player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
@@ -415,19 +428,37 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             if (distance < playerR + powerUpR) {
                 int type = powerUp.getType();
 
-                if (type == 1) {
-                    player.gainLife();
-                }
-                 else if (type == 2) {
-                    player.increasePower(1);
-                }
-
-                else if (type == 3) {
-                    player.increaseDamage(1);
+                switch(type) {
+                    case 1:
+                        player.gainLife();
+                        break;
+                    case 2:
+                        player.increasePower(1);
+                        break;
+                    case 3:
+                        player.increaseDamage(1);
+                        break;
+                    case 4:
+                        slowMoTimerNanoseconds = System.nanoTime();
+                        for (int j = 0; j < enemies.size(); j++) {
+                            enemies.get(j).setSlow(true);
+                        }
+                        break;
                 }
 
                 powerUps.remove(i);
                 i--;
+            }
+        }
+
+        if (slowMoTimerNanoseconds != 0 ) {
+            slowMoTimerElapsedMilliseconds = (System.nanoTime() - slowMoTimerNanoseconds) / 1000000;
+
+            if (slowMoTimerElapsedMilliseconds > slowMoDurationMilliseconds) {
+                slowMoTimerNanoseconds = 0;
+                for (int j = 0; j < enemies.size(); j++) {
+                    enemies.get(j).setSlow(false);
+                }
             }
         }
     }

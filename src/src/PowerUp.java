@@ -14,6 +14,7 @@ public class PowerUp {
      * 1 = +1 life
      * 2 = +1 power
      * 3 = +1 damage
+     * 4 = 5 second slow-mp
      */
     private int type;
 
@@ -32,6 +33,9 @@ public class PowerUp {
                 break;
             case 3:
                 powerUpColor = Color.CYAN;
+                break;
+            case 4:
+                powerUpColor = Color.WHITE;
                 break;
         }
     }
