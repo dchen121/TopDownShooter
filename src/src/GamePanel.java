@@ -20,13 +20,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage image;
     private Graphics2D g;
 
-    private final int FPS = 30;
+    private final int FPS = 60;
     private double averageFPS;
 
     public static Player player;
     public static ArrayList<Bullet> bullets;
     public static ArrayList<Enemy> enemies;
     public static ArrayList<PowerUp> powerUps;
+    public static ArrayList<Text> texts;
 
     private long waveStartTimerNanoseconds;
     private long waveStartTimerElapsedMilliseconds;
@@ -147,6 +148,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         bullets = new ArrayList<Bullet>();
         enemies = new ArrayList<Enemy>();
         powerUps = new ArrayList<PowerUp>();
+        texts = new ArrayList<Text>();
 
         waveStartTimerNanoseconds = 0;
         waveStartTimerElapsedMilliseconds = 0;
@@ -185,6 +187,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         updateBullets();
         updateEnemies();
         updatePowerUps();
+        updateTexts();
 
         checkBulletEnemyCollision();
         removeDeadEnemies();
@@ -213,6 +216,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         renderBullets();
         renderEnemies();
         renderPowerUps();
+        renderTexts();
 
         if (slowMoTimerNanoseconds != 0) {
             displaySlowMo();
@@ -322,15 +326,27 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         enemies.clear();
 
         for (int i = 0; i < waveNumber; i++) {
-            enemies.add(new Enemy(1, 4));
+            enemies.add(new Enemy(1, 1));
         }
 
-        for (int j = 0; j < waveNumber / 3; j++) {
-            enemies.add(new Enemy(2, 4));
+        for (int i = 0; i < waveNumber / 3; i++) {
+            enemies.add(new Enemy(2, 1));
         }
 
-        for (int k = 0; k < waveNumber / 5; k++) {
-            enemies.add(new Enemy(3, 4));
+        for (int j = 0; j < waveNumber / 5; j++) {
+            enemies.add(new Enemy(3, 1));
+        }
+
+        for (int k = 0; k < waveNumber / 7; k++) {
+            enemies.add(new Enemy(1, 3));
+        }
+
+        for (int i = 0; i < waveNumber / 10; i++) {
+            enemies.add(new Enemy(2, 3));
+        }
+
+        for (int i = 0; i < waveNumber / 15; i++) {
+            enemies.add(new Enemy(3, 3));
         }
     }
 
@@ -461,6 +477,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                         player.setRapidFire(true);
                 }
 
+                texts.add(new Text(player.getX(), player.getY(), powerUp.getName()));
+
                 powerUps.remove(i);
                 i--;
             }
@@ -567,6 +585,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    private void updateTexts() {
+        for (int i = 0; i < texts.size(); i++) {
+            boolean remove = texts.get(i).update();
+            if (remove) {
+                texts.remove(i);
+                i--;
+            }
+        }
+    }
+
     private void renderBullets() {
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).draw(g);
@@ -582,6 +610,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void renderPowerUps() {
         for (int i = 0; i < powerUps.size(); i++) {
             powerUps.get(i).draw(g);
+        }
+    }
+
+    private void renderTexts() {
+        for (int i = 0; i < texts.size(); i++) {
+            texts.get(i).draw(g);
         }
     }
 }

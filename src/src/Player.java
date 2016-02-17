@@ -7,7 +7,7 @@ public class Player {
 
     private final Color normalColor = Color.BLACK;
     private final Color recoveringColor = Color.YELLOW;
-    private final int MAX_DAMAGE = 3;
+    private final int MAX_DAMAGE = 5;
 
     private int x;
     private int y;
@@ -45,7 +45,7 @@ public class Player {
         dx = 0;
         dy = 0;
 
-        speed = 7;
+        speed = 4;
         damage = 1;
         powerLevel = 0;
 

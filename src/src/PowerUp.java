@@ -8,7 +8,8 @@ public class PowerUp {
     private double x;
     private double y;
     private int r;
-    private Color powerUpColor;
+    private Color color;
+    private String name;
 
     /**
      * 1 = +1 life
@@ -27,19 +28,24 @@ public class PowerUp {
 
         switch(type) {
             case 1:
-                powerUpColor = Color.PINK;
+                color = Color.PINK;
+                name = "+1 Life";
                 break;
             case 2:
-                powerUpColor = Color.YELLOW;
+                color = Color.YELLOW;
+                name = "+1 Power";
                 break;
             case 3:
-                powerUpColor = Color.CYAN;
+                color = Color.CYAN;
+                name = "+1 Damage";
                 break;
             case 4:
-                powerUpColor = Color.WHITE;
+                color = Color.WHITE;
+                name = "Slow-Mo";
                 break;
             case 5:
-                powerUpColor = Color.GREEN;
+                color = Color.GREEN;
+                name = "Rapid Fire";
                 break;
         }
     }
@@ -48,7 +54,7 @@ public class PowerUp {
      * Update power up and return true if power up collides with boundary of game, false otherwise.
      */
     public boolean update() {
-        y += 2;
+        y += 1;
 
         if (y > GamePanel.HEIGHT + r) {
             return true;
@@ -58,7 +64,7 @@ public class PowerUp {
     }
 
     public void draw(Graphics2D g) {
-        g.setColor(powerUpColor);
+        g.setColor(color);
         g.fillRect((int) (x - r), (int) (y - r), 2 * r, 2 * r);
     }
 
@@ -66,4 +72,5 @@ public class PowerUp {
     public double getY() { return y; }
     public int getR() { return r; }
     public int getType() { return type; }
+    public String getName() { return name; }
 }
