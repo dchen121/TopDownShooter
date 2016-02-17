@@ -238,8 +238,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     private void drawBackground() {
-        g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        if (slowMoTimerElapsedMilliseconds != 0) {
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
+        }
+        else if (rapidFireElapsedMilliseconds != 0) {
+            g.setColor(Color.DARK_GRAY);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
+        }
+        else {
+            g.setColor(Color.GRAY);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
+        }
     }
 
     private void displayAverageFPS() {
@@ -384,7 +394,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 else if (random < 0.1) powerUps.add(new PowerUp(3, e.getX(), e.getY()));
                 else if (random < 0.15) powerUps.add(new PowerUp(4, e.getX(), e.getY()));
                 else if (random < 0.2) powerUps.add(new PowerUp(5, e.getX(), e.getY()));
-                else powerUps.add(new PowerUp(5, e.getX(), e.getY()));
 
                 player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
