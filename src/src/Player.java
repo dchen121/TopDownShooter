@@ -6,7 +6,7 @@ import java.awt.*;
 public class Player {
 
     private final Color normalColor = Color.BLACK;
-    private final Color recoveringColor = Color.YELLOW;
+    private final Color recoveringColor = Color.WHITE;
     private final int MAX_DAMAGE = 5;
 
     private int x;

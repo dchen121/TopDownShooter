@@ -28,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static ArrayList<Enemy> enemies;
     public static ArrayList<PowerUp> powerUps;
     public static ArrayList<Text> texts;
+    public static ArrayList<Explosion> explosions;
 
     private long waveStartTimerNanoseconds;
     private long waveStartTimerElapsedMilliseconds;
@@ -37,11 +38,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private long slowMoTimerNanoseconds;
     private long slowMoTimerElapsedMilliseconds;
-    private long slowMoDurationMilliseconds = 5000;
+    private final long slowMoDurationMilliseconds = 5000;
 
     private long rapidFireTimerNanoseconds;
     private long rapidFireElapsedMilliseconds;
-    private long rapidFireDurationMilliseconds = 2500;
+    private final long rapidFireDurationMilliseconds = 2500;
 
 
     /**
@@ -149,6 +150,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         enemies = new ArrayList<Enemy>();
         powerUps = new ArrayList<PowerUp>();
         texts = new ArrayList<Text>();
+        explosions = new ArrayList<Explosion>();
 
         waveStartTimerNanoseconds = 0;
         waveStartTimerElapsedMilliseconds = 0;
@@ -188,6 +190,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         updateEnemies();
         updatePowerUps();
         updateTexts();
+        updateExplosions();
 
         checkBulletEnemyCollision();
         removeDeadEnemies();
@@ -217,6 +220,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         renderEnemies();
         renderPowerUps();
         renderTexts();
+        renderExplosions();
 
         if (slowMoTimerNanoseconds != 0) {
             displaySlowMo();
@@ -400,6 +404,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 i--;
 
                 e.explode();
+                explosions.add(new Explosion(e.getX(), e.getY(), e.getR()));
             }
         }
     }
@@ -568,6 +573,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             if (collisionWithBoundary) {
                 bullets.remove(i);
                 i--;
+                break;
             }
         }
     }
@@ -595,6 +601,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    private void updateExplosions() {
+        for (int i = 0; i < explosions.size(); i++) {
+            boolean remove = explosions.get(i).update();
+            if (remove) {
+                explosions.remove(i);
+                i--;
+            }
+        }
+    }
+
     private void renderBullets() {
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).draw(g);
@@ -616,6 +632,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void renderTexts() {
         for (int i = 0; i < texts.size(); i++) {
             texts.get(i).draw(g);
+        }
+    }
+
+    private void renderExplosions() {
+        for (int i = 0; i < explosions.size(); i++) {
+            explosions.get(i).draw(g);
         }
     }
 }
