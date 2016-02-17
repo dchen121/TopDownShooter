@@ -33,7 +33,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private int waveNumber;
     private boolean waveStart;
     private final int waveDelayMilliseconds = 3000;
-    private boolean noMoreWaves;
 
     private long slowMoTimerNanoseconds;
     private long slowMoTimerElapsedMilliseconds;
@@ -153,7 +152,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         waveStartTimerElapsedMilliseconds = 0;
         waveStart = true;
         waveNumber = 0;
-        noMoreWaves = false;
     }
 
     /**
@@ -299,11 +297,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
      */
     private void spawnWave() {
         if (waveStartTimerNanoseconds == 0 && enemies.size() == 0) {
-            // Game over if no more waves left
-            if (noMoreWaves) {
-                running = false;
-            }
-
             waveNumber++;
             waveStart = false;
             waveStartTimerNanoseconds = System.nanoTime();
@@ -323,31 +316,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     /**
-     * Create enemies for current wave. Must manually add new waves.
+     * Create enemies for current wave.
      */
     private void createNewEnemies() {
         enemies.clear();
 
-        if (waveNumber == 1) {
-            for (int i = 0; i < 4; i++) {
-                enemies.add(new Enemy(1, 1));
-            }
-        }
-        else if (waveNumber == 2) {
-            for (int i = 0; i < 4; i++) {
-                enemies.add(new Enemy(1, 1));
-            }
-            enemies.add(new Enemy(1, 2));
-            enemies.add(new Enemy(1, 2));
-        }
-        else if (waveNumber == 3) {
+        for (int i = 0; i < waveNumber; i++) {
             enemies.add(new Enemy(1, 4));
-            enemies.add(new Enemy(2, 4));
-            enemies.add(new Enemy(3, 4));
-
-            noMoreWaves = true;
         }
 
+        for (int j = 0; j < waveNumber / 3; j++) {
+            enemies.add(new Enemy(2, 4));
+        }
+
+        for (int k = 0; k < waveNumber / 5; k++) {
+            enemies.add(new Enemy(3, 4));
+        }
     }
 
     /**
