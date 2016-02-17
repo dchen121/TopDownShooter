@@ -45,7 +45,7 @@ public class Player {
         dx = 0;
         dy = 0;
 
-        speed = 4;
+        speed = 7;
         damage = 1;
         powerLevel = 0;
 

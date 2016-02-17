@@ -37,7 +37,7 @@ public class Enemy {
             // Default enemy type
             case 1:
                 enemyColor = Color.BLUE;
-                speed = 2;
+                speed = 4;
 
                 switch(rank) {
                     case 1:
@@ -62,7 +62,7 @@ public class Enemy {
             // Fast, weak
             case 2:
                 enemyColor = Color.GREEN;
-                speed = 3;
+                speed = 6;
 
                 switch(rank) {
                     case 1:
@@ -87,7 +87,7 @@ public class Enemy {
             // Slow, strong
             case 3:
                 enemyColor = Color.ORANGE;
-                speed = 1;
+                speed = 2;
 
                 switch(rank) {
                     case 1:

@@ -54,7 +54,7 @@ public class PowerUp {
      * Update power up and return true if power up collides with boundary of game, false otherwise.
      */
     public boolean update() {
-        y += 1;
+        y += 2;
 
         if (y > GamePanel.HEIGHT + r) {
             return true;

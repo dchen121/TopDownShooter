@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage image;
     private Graphics2D g;
 
-    private final int FPS = 60;
+    private final int FPS = 30;
     private double averageFPS;
 
     public static Player player;
@@ -37,7 +37,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private final int waveDelayMilliseconds = 3000;
 
     private long slowMoTimerNanoseconds;
-    private long slowMoTimerElapsedMilliseconds;
+    private long slowMoElapsedMilliseconds;
     private final long slowMoDurationMilliseconds = 5000;
 
     private long rapidFireTimerNanoseconds;
@@ -240,15 +240,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void displaySlowMo() {
         g.setColor(Color.WHITE);
         g.drawRect(20, 60, 100, 8);
-        g.fillRect(20, 60, (int) (100 - (100 * slowMoTimerElapsedMilliseconds / slowMoDurationMilliseconds)), 8);
+        g.fillRect(20, 60, (int) (100 - (100 * slowMoElapsedMilliseconds / slowMoDurationMilliseconds)), 8);
     }
 
     private void drawBackground() {
-        if (slowMoTimerElapsedMilliseconds != 0) {
+        if (slowMoTimerNanoseconds != 0) {
             g.setColor(Color.LIGHT_GRAY);
             g.fillRect(0, 0, WIDTH, HEIGHT);
         }
-        else if (rapidFireElapsedMilliseconds != 0) {
+        else if (rapidFireTimerNanoseconds != 0) {
             g.setColor(Color.DARK_GRAY);
             g.fillRect(0, 0, WIDTH, HEIGHT);
         }
@@ -490,9 +490,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
 
         if (slowMoTimerNanoseconds != 0 ) {
-            slowMoTimerElapsedMilliseconds = (System.nanoTime() - slowMoTimerNanoseconds) / 1000000;
+            slowMoElapsedMilliseconds = (System.nanoTime() - slowMoTimerNanoseconds) / 1000000;
 
-            if (slowMoTimerElapsedMilliseconds > slowMoDurationMilliseconds) {
+            if (slowMoElapsedMilliseconds > slowMoDurationMilliseconds) {
                 slowMoTimerNanoseconds = 0;
                 for (int j = 0; j < enemies.size(); j++) {
                     enemies.get(j).setSlow(false);
