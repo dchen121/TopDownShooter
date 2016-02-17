@@ -29,11 +29,13 @@ public class Bullet {
         bulletColor = Color.BLACK;
     }
 
+    /**
+     * Update bullet and return true if bullet collides with boundary of game, false otherwise.
+     */
     public boolean update() {
         x += dx;
         y += dy;
 
-        // Check collision with boundary of game
         if (x < -r || x > GamePanel.WIDTH + r || y < -r || y > GamePanel.HEIGHT + r) {
             return true;
         }

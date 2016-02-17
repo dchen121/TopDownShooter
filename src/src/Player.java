@@ -15,6 +15,7 @@ public class Player {
     private int dx;
     private int dy;
 
+    private int powerLevel;
     private int speed;
     private boolean left;
     private boolean right;
@@ -36,7 +37,7 @@ public class Player {
     public Player() {
         x = GamePanel.WIDTH / 2;
         y = GamePanel.HEIGHT / 2;
-        r = 7;
+        r = 10;
 
         dx = 0;
         dy = 0;
@@ -97,15 +98,33 @@ public class Player {
     }
 
     /**
-     * Fire bullet. Player can only fire once per firing delay time.
+     * Fire bullets based on power level. Player can only fire once per firing delay time.
      */
     private void fire() {
         if (firing) {
             long elapsedMilliseconds = (System.nanoTime() - firingTimerNanoseconds) / 1000000;
             if (elapsedMilliseconds >= firingDelayMilliseconds) {
-                Bullet b = new Bullet(270, x, y); // Fire a bullet facing upwards
-                GamePanel.bullets.add(b);
                 firingTimerNanoseconds = System.nanoTime();
+
+                if (powerLevel < 2) {
+                    GamePanel.bullets.add(new Bullet(270, x, y));
+                }
+                else if (powerLevel < 5) {
+                    GamePanel.bullets.add(new Bullet(270, x + (r / 2), y));
+                    GamePanel.bullets.add(new Bullet(270, x - (r / 2), y));
+                }
+                else if (powerLevel < 10){
+                    GamePanel.bullets.add(new Bullet(275, x + (r / 3), y));
+                    GamePanel.bullets.add(new Bullet(270, x, y));
+                    GamePanel.bullets.add(new Bullet(265, x - (r / 3), y));
+                }
+                else {
+                    GamePanel.bullets.add(new Bullet(280, x + (r / 2), y));
+                    GamePanel.bullets.add(new Bullet(275, x + (r / 3), y));
+                    GamePanel.bullets.add(new Bullet(270, x, y));
+                    GamePanel.bullets.add(new Bullet(265, x - (r / 3), y));
+                    GamePanel.bullets.add(new Bullet(260, x - (r / 2), y));
+                }
             }
         }
     }
@@ -121,19 +140,21 @@ public class Player {
     }
 
     public void hit() {
-        lives--;
+        loseLife();
         recovering = true;
         recoveryTimerNanoseconds = System.nanoTime();
     }
 
-    public void addScore(int i) {
-        score += i;
+    public void addScore(int i) { score += i; }
+    public void gainLife() {
+        lives++;
     }
+    public void loseLife() { lives--; }
+    public void increasePower(int i) { powerLevel += i; }
 
     public boolean isDead() {
         return lives <= 0;
     }
-
     public int getX() { return x; }
     public int getY() { return y; }
     public int getR() { return r; }
@@ -141,6 +162,7 @@ public class Player {
     public boolean isRecovering() { return recovering; }
     public int getScore() { return score; }
     public int getLives() { return lives; }
+    public int getPowerLevel() { return powerLevel; }
     public void setLeft(boolean b) {
         this.left = b;
     }

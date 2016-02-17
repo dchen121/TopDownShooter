@@ -153,7 +153,6 @@ public class Enemy {
             for (int i = 0; i < amount; i++) {
                 Enemy e = new Enemy(getType(), getRank() - 1);
 
-                // Set position of new enemies where previous enemy was killed with random direction
                 e.x = this.x;
                 e.y = this.y;
                 double angle;

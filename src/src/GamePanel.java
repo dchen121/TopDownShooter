@@ -26,6 +26,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static Player player;
     public static ArrayList<Bullet> bullets;
     public static ArrayList<Enemy> enemies;
+    public static ArrayList<PowerUp> powerUps;
 
     private long waveStartTimerNanoseconds;
     private long waveStartTimerElapsedMilliseconds;
@@ -135,6 +136,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         player = new Player();
         bullets = new ArrayList<Bullet>();
         enemies = new ArrayList<Enemy>();
+        powerUps = new ArrayList<PowerUp>();
 
         waveStartTimerNanoseconds = 0;
         waveStartTimerElapsedMilliseconds = 0;
@@ -170,14 +172,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void gameUpdate() {
         spawnWave();
 
-        updatePlayer();
+        player.update();
         updateBullets();
         updateEnemies();
+        updatePowerUps();
 
         checkBulletEnemyCollision();
         removeDeadEnemies();
 
         checkPlayerEnemyCollision();
+        checkPlayerPowerUpCollision();
+
     }
 
     /**
@@ -199,11 +204,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         renderPlayer();
         renderBullets();
         renderEnemies();
+        renderPowerUps();
 
         // Draw player lives
         for (int i = 0; i < player.getLives(); i++) {
             g.setColor(player.getNormalColor());
-            g.fillOval(20 + (20 * i), 20, player.getR() * 2, player.getR() * 2);
+            g.fillOval(20 + (20 * i), 20, 15, 15);
         }
 
         // Display player score
@@ -272,14 +278,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         if (waveNumber == 1) {
             for (int i = 0; i < 4; i++) {
-                enemies.add(new Enemy(1, 4));
-
-
-                enemies.add(new Enemy(1, 4));
-                enemies.add(new Enemy(2, 4));
-                enemies.add(new Enemy(3, 4));
-
-
+                enemies.add(new Enemy(1, 1));
             }
         }
         else if (waveNumber == 2) {
@@ -335,7 +334,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void removeDeadEnemies() {
         for (int i = 0; i < enemies.size(); i++) {
             Enemy e = enemies.get(i);
+
             if (e.isDead()) {
+                double random = Math.random();
+                if (random < 0.001) powerUps.add(new PowerUp(1, e.getX(), e.getY()));
+                else if (random < 0.005) powerUps.add(new PowerUp(2, e.getX(), e.getY()));
+
                 player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
                 i--;
@@ -371,6 +375,41 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                         running = false;
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Check player-power up collision. If collision, add appropriate power up to player.
+     */
+    private void checkPlayerPowerUpCollision() {
+        int playerX = player.getX();
+        int playerY = player.getY();
+        int playerR = player.getR();
+
+        for (int i = 0; i < powerUps.size(); i++) {
+            PowerUp powerUp = powerUps.get(i);
+
+            double powerUpX = powerUp.getX();
+            double powerUpy = powerUp.getY();
+            double powerUpR = powerUp.getR();
+
+            double dx = playerX - powerUpX;
+            double dy = playerY - powerUpy;
+            double distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < playerR + powerUpR) {
+                int type = powerUp.getType();
+
+                if (type == 1) {
+                    player.gainLife();
+                }
+                 else if (type == 2) {
+                    player.increasePower(1);
+                }
+
+                powerUps.remove(i);
+                i--;
             }
         }
     }
@@ -423,11 +462,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         if (keyCode == KeyEvent.VK_SPACE) player.setFiring(false);
     }
 
-
-    private void updatePlayer() {
-        player.update();
-    }
-
     private void updateEnemies() {
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).update();
@@ -447,6 +481,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    /**
+     * Update power ups and remove those that have been collected or exceed game boundary
+     */
+    private void updatePowerUps() {
+        for (int i = 0; i < powerUps.size(); i++) {
+            boolean remove = powerUps.get(i).update();
+            if (remove) {
+                powerUps.remove(i);
+                i--;
+            }
+        }
+    }
+
     private void renderPlayer() {
         player.draw(g);
     }
@@ -460,6 +507,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void renderEnemies() {
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).draw(g);
+        }
+    }
+
+    private void renderPowerUps() {
+        for (int i = 0; i < powerUps.size(); i++) {
+            powerUps.get(i).draw(g);
         }
     }
 }
