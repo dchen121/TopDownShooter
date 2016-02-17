@@ -332,7 +332,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 double distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < bulletR + enemyR) {
-                    e.hit();
+                    e.hit(player.getDamage());
                     bullets.remove(i);
                     i--;
                     break;
@@ -351,7 +351,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             if (e.isDead()) {
                 double random = Math.random();
                 if (random < 0.001) powerUps.add(new PowerUp(1, e.getX(), e.getY()));
-                else if (random < 0.02) powerUps.add(new PowerUp(2, e.getX(), e.getY()));
+                else if (random < 0.05) powerUps.add(new PowerUp(2, e.getX(), e.getY()));
+                else if (random < 0.1) powerUps.add(new PowerUp(3, e.getX(), e.getY()));
 
                 player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
@@ -419,6 +420,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 }
                  else if (type == 2) {
                     player.increasePower(1);
+                }
+
+                else if (type == 3) {
+                    player.increaseDamage(1);
                 }
 
                 powerUps.remove(i);

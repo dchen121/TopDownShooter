@@ -7,6 +7,7 @@ public class Player {
 
     private final Color normalColor = Color.BLACK;
     private final Color recoveringColor = Color.YELLOW;
+    private final int MAX_DAMAGE = 5;
 
     private int x;
     private int y;
@@ -15,13 +16,15 @@ public class Player {
     private int dx;
     private int dy;
 
-    private int powerLevel;
     private int speed;
+    private int damage;
+    private int powerLevel;
+
     private boolean left;
     private boolean right;
     private boolean up;
-
     private boolean down;
+
     private boolean firing;
     private long firingTimerNanoseconds;
 
@@ -41,7 +44,10 @@ public class Player {
 
         dx = 0;
         dy = 0;
+
         speed = 7;
+        damage = 1;
+        powerLevel = 0;
 
         lives = 3;
         recovering = false;
@@ -146,23 +152,26 @@ public class Player {
     }
 
     public void addScore(int i) { score += i; }
-    public void gainLife() {
-        lives++;
-    }
+    public void gainLife() { lives++; }
     public void loseLife() { lives--; }
     public void increasePower(int i) { powerLevel += i; }
 
-    public boolean isDead() {
-        return lives <= 0;
+    public void increaseDamage(int i) {
+        damage += i;
+        if (damage > MAX_DAMAGE) {
+            damage = MAX_DAMAGE;
+        }
     }
+
     public int getX() { return x; }
     public int getY() { return y; }
     public int getR() { return r; }
     public Color getNormalColor() { return normalColor; }
+    public int getDamage() { return damage; }
     public boolean isRecovering() { return recovering; }
+    public boolean isDead() { return lives <= 0; }
     public int getScore() { return score; }
     public int getLives() { return lives; }
-    public int getPowerLevel() { return powerLevel; }
     public void setLeft(boolean b) {
         this.left = b;
     }

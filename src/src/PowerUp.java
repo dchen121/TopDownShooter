@@ -13,6 +13,7 @@ public class PowerUp {
     /**
      * 1 = +1 life
      * 2 = +1 power
+     * 3 = +1 damage
      */
     private int type;
 
@@ -20,7 +21,7 @@ public class PowerUp {
         this.type = type;
         this.x = x;
         this.y = y;
-        r = 2;
+        r = 3;
 
         switch(type) {
             case 1:
@@ -29,7 +30,9 @@ public class PowerUp {
             case 2:
                 powerUpColor = Color.YELLOW;
                 break;
-
+            case 3:
+                powerUpColor = Color.CYAN;
+                break;
         }
     }
 

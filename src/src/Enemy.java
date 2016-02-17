@@ -40,7 +40,7 @@ public class Enemy {
                     case 1:
                         speed = 3;
                         r = 5;
-                        health = 1;
+                        health = 2;
                         break;
                     case 2:
                         speed = 3;
@@ -133,8 +133,8 @@ public class Enemy {
         hitTimerNanoseconds = 0;
     }
 
-    public void hit() {
-        health--;
+    public void hit(int damage) {
+        health -= damage;
         if (health <= 0) {
             dead = true;
         }
@@ -209,7 +209,6 @@ public class Enemy {
             g.setColor(Color.RED);
         } else {
             g.setColor(enemyColor);
-
         }
 
         g.fillOval((int) (x - r), (int) (y - r), 2 * r, 2 * r);
