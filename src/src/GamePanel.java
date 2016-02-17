@@ -39,6 +39,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private long slowMoTimerElapsedMilliseconds;
     private long slowMoDurationMilliseconds = 5000;
 
+    private long rapidFireTimerNanoseconds;
+    private long rapidFireElapsedMilliseconds;
+    private long rapidFireDurationMilliseconds = 2500;
+
 
     /**
      * Constructor
@@ -213,10 +217,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         renderPowerUps();
 
         if (slowMoTimerNanoseconds != 0) {
-            g.setColor(Color.WHITE);
-            g.drawRect(20, 60, 100, 8);
-            g.fillRect(20, 60, (int) (100 - (100 * slowMoTimerElapsedMilliseconds / slowMoDurationMilliseconds)), 8);
+            displaySlowMo();
         }
+
+        if (rapidFireTimerNanoseconds != 0) {
+            displayRapidFire();
+        }
+    }
+
+    private void displayRapidFire() {
+        g.setColor(Color.WHITE);
+        g.drawRect(20, 80, 100, 8);
+        g.fillRect(20, 80, (int) (100 - (100 * rapidFireElapsedMilliseconds / rapidFireDurationMilliseconds)), 8);
+    }
+
+    private void displaySlowMo() {
+        g.setColor(Color.WHITE);
+        g.drawRect(20, 60, 100, 8);
+        g.fillRect(20, 60, (int) (100 - (100 * slowMoTimerElapsedMilliseconds / slowMoDurationMilliseconds)), 8);
     }
 
     private void drawBackground() {
@@ -365,7 +383,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 else if (random < 0.05) powerUps.add(new PowerUp(2, e.getX(), e.getY()));
                 else if (random < 0.1) powerUps.add(new PowerUp(3, e.getX(), e.getY()));
                 else if (random < 0.15) powerUps.add(new PowerUp(4, e.getX(), e.getY()));
-                else powerUps.add(new PowerUp(4, e.getX(), e.getY()));
+                else if (random < 0.2) powerUps.add(new PowerUp(5, e.getX(), e.getY()));
+                else powerUps.add(new PowerUp(5, e.getX(), e.getY()));
 
                 player.addScore(e.getType() + e.getRank());
                 enemies.remove(i);
@@ -444,6 +463,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                             enemies.get(j).setSlow(true);
                         }
                         break;
+                    case 5:
+                        rapidFireTimerNanoseconds = System.nanoTime();
+                        player.setRapidFire(true);
                 }
 
                 powerUps.remove(i);
@@ -459,6 +481,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 for (int j = 0; j < enemies.size(); j++) {
                     enemies.get(j).setSlow(false);
                 }
+            }
+        }
+
+        if (rapidFireTimerNanoseconds != 0) {
+            rapidFireElapsedMilliseconds = (System.nanoTime() - rapidFireTimerNanoseconds) / 1000000;
+
+            if (rapidFireElapsedMilliseconds > rapidFireDurationMilliseconds) {
+                rapidFireTimerNanoseconds = 0;
+                player.setRapidFire(false);
             }
         }
     }

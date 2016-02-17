@@ -26,6 +26,7 @@ public class Player {
     private boolean down;
 
     private boolean firing;
+    private boolean rapidFire;
     private long firingTimerNanoseconds;
     private long firingDelayMilliseconds;
 
@@ -48,13 +49,15 @@ public class Player {
         damage = 1;
         powerLevel = 0;
 
+        firing = false;
+        rapidFire = false;
+        firingTimerNanoseconds = System.nanoTime();
+        firingDelayMilliseconds = 200;
+
         lives = 3;
         recovering = false;
         recoveryTimerNanoseconds = 0;
 
-        firing = false;
-        firingTimerNanoseconds = System.nanoTime();
-        firingDelayMilliseconds = 200;
 
         score = 0;
     }
@@ -107,8 +110,15 @@ public class Player {
      */
     private void fire() {
         if (firing) {
+            long tempFiringDelayMilliseconds = firingDelayMilliseconds;
+
+            if (rapidFire) {
+                tempFiringDelayMilliseconds = firingDelayMilliseconds / 2;
+            }
+
             long elapsedMilliseconds = (System.nanoTime() - firingTimerNanoseconds) / 1000000;
-            if (elapsedMilliseconds >= firingDelayMilliseconds) {
+
+            if (elapsedMilliseconds >= tempFiringDelayMilliseconds) {
                 firingTimerNanoseconds = System.nanoTime();
 
                 if (powerLevel < 2) {
@@ -182,4 +192,5 @@ public class Player {
     }
     public void setDown(boolean b) { this.down = b; }
     public void setFiring(boolean b) { this.firing = b; }
+    public void setRapidFire(boolean rapidFire) { this.rapidFire = rapidFire; }
 }
